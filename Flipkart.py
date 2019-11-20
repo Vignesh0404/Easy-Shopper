@@ -2,21 +2,23 @@ from selenium import webdriver
 from bs4 import BeautifulSoup
 import pandas as pd
 
-driver = webdriver.Chrome("C:/Users/k9Iyappan/Downloads/chromedriver_win32/chromedriver.exe")
+#driver = webdriver.Chrome("C:/Users/k9Iyappan/Downloads/chromedriver_win32/chromedriver.exe")
 
+
+pricenew=[]
 brands=[]
 products=[] #List to store name of the product
 prices=[] #List to store price of the product
 ratings=[] #List to store rating of the product
 url="https://www.flipkart.com/mens-clothing/tshirts/pr?sid=2oq%2Cs9b%2Cj9y&otracker=nmenu_sub_Men_0_T-Shirts&p%5B%5D=facets.serviceability%5B%5D%3Dtrue&p%5B%5D=facets.brand%255B%255D%3DADIDAS&page="
 #url="https://www.flipkart.com/men/tshirts/pr?sid=2oq%2Cs9b%2Cj9y&page="
-for i in range(1,30):
+for i in range(1,3):
     driver.get(url+str(i))
     content = driver.page_source
     soup = BeautifulSoup(content,'html.parser')
 
-    pagenum = soup.find_all('div',attrs={'class':'_2zg3yZ'})
-    print(pagenum)
+#   pagenum = soup.find_all('div',attrs={'class':'_2zg3yZ'})
+#   print(pagenum)
 
 #print(pagenum.string)
 
@@ -24,10 +26,15 @@ for i in range(1,30):
         brand = a.find('div', attrs={'class':'_2B_pmu'})
         name = a.find('a', attrs={'class':'_2mylT6'})   #name works
         price = a.find('div', attrs={'class':'_1vC4OE'})
-        print(brand.string)
+        pricedb = price.string
+        pricedb = pricedb.replace(',','')
+        pricedb = pricedb.strip().lstrip('₹')
+        productsdb = name.string
+        productsdb = productsdb.strip('"')
         brands.append(brand.string)
-        products.append(name.string)
-        prices.append(price.string)
+        print(productsdb)
+        products.append(productsdb)
+        prices.append(pricedb)
 
 df = pd.DataFrame({'Brand Name':brands,'Product Name':products,'Price':prices})
 df.to_csv(r'D:\Swaran\products.csv', index=False, encoding='utf-8')
